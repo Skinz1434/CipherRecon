@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CIPHER-RECON | Elite Red Team Toolkit</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/notification.css">
+  <style>
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="matrix-bg"></div>
+    
+    <!-- Terminal Header -->
+    <header class="terminal-header">
+      <pre class="ascii-art glitch">
+╔═══════════════════════════════════════════════════════╗
+║   ██████╗██╗██████╗ ██╗  ██╗███████╗██████╗          ║
+║  ██╔════╝██║██╔══██╗██║  ██║██╔════╝██╔══██╗         ║
+║  ██║     ██║██████╔╝███████║█████╗  ██████╔╝         ║
+║  ██║     ██║██╔═══╝ ██╔══██║██╔══╝  ██╔══██╗         ║
+║  ╚██████╗██║██║     ██║  ██║███████╗██║  ██║         ║
+║   ╚═════╝╚═╝╚═╝     ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝         ║
+╚═══════════════════════════════════════════════════════╝</pre>
+      <div class="status-bar">
+        <span class="status-item">STATUS: <span class="online">OPERATIONAL</span></span>
+        <span class="status-item">MODE: <span class="mode">STEALTH</span></span>
+        <span class="status-item">ENCRYPTION: <span class="encryption">AES-256-GCM</span></span>
+        <span class="status-item">VERSION: <span class="version">2.0.0</span></span>
+      </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav-tabs">
+      <button class="nav-tab active" onclick="switchTab('steganography')">STEGANOGRAPHY</button>
+      <button class="nav-tab" onclick="switchTab('cryptography')">CRYPTOGRAPHY</button>
+      <button class="nav-tab" onclick="switchTab('analysis')">ANALYSIS</button>
+      <button class="nav-tab" onclick="switchTab('tools')">TOOLS</button>
+      <button class="nav-tab" onclick="switchTab('api')">API</button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+      
+      <!-- Steganography Tab -->
+      <div id="steganography" class="tab-content active">
+        <div class="tool-grid">
+          <!-- Encoder -->
+          <section class="tool-card">
+            <h2>MESSAGE ENCODER</h2>
+            <div class="form-group">
+              <label>Secret Message</label>
+              <textarea id="encodeMessage" placeholder="Enter your covert message..." spellcheck="false"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Cover Text</label>
+              <textarea id="encodeCarrier" placeholder="Enter innocent-looking cover text..." spellcheck="false"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Technique</label>
+              <select id="encodeTechnique">
+                <option value="zero-width">Zero-Width Characters</option>
+                <option value="emoji">Emoji Encoding</option>
+                <option value="whitespace">Whitespace Manipulation</option>
+                <option value="homoglyph">Unicode Homoglyphs</option>
+                <option value="invisible">Invisible Unicode</option>
+              </select>
+            </div>
+            <button class="btn-primary" onclick="encode()">
+              ▶ ENCODE MESSAGE
+            </button>
+            <div class="output" id="encodeOutput"></div>
+          </section>
+
+          <!-- Decoder -->
+          <section class="tool-card">
+            <h2>MESSAGE DECODER</h2>
+            <div class="form-group">
+              <label>Suspicious Text</label>
+              <textarea id="decodeCarrier" placeholder="Paste text containing hidden message..." spellcheck="false"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Detection Mode</label>
+              <select id="decodeTechnique">
+                <option value="auto">Auto-Detect</option>
+                <option value="zero-width">Zero-Width</option>
+                <option value="emoji">Emoji</option>
+                <option value="whitespace">Whitespace</option>
+                <option value="all">Try All</option>
+              </select>
+            </div>
+            <button class="btn-primary" onclick="decode()">
+              ▶ EXTRACT MESSAGE
+            </button>
+            <div class="output" id="decodeOutput"></div>
+          </section>
+        </div>
+      </div>
+
+      <!-- Cryptography Tab -->
+      <div id="cryptography" class="tab-content">
+        <div class="tool-grid">
+          <!-- Cipher -->
+          <section class="tool-card">
+            <h2>CIPHER OPERATIONS</h2>
+            <div class="form-group">
+              <label>Input Text</label>
+              <textarea id="cipherInput" placeholder="Enter text to encrypt/decrypt..." spellcheck="false"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Cipher Type</label>
+              <select id="cipherType">
+                <option value="rot13">ROT13</option>
+                <option value="caesar">Caesar Cipher</option>
+                <option value="atbash">Atbash</option>
+                <option value="vigenere">Vigenère</option>
+                <option value="playfair">Playfair</option>
+                <option value="rail-fence">Rail Fence</option>
+              </select>
+            </div>
+            <div class="form-group" id="cipherKeyGroup" style="display:none;">
+              <label>Key/Shift</label>
+              <input type="text" id="cipherKey" placeholder="Enter key or shift value">
+            </div>
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="cipherDecode">
+                Decrypt Mode
+              </label>
+            </div>
+            <button class="btn-primary" onclick="cipher()">
+              ▶ PROCESS
+            </button>
+            <div class="output" id="cipherOutput"></div>
+          </section>
+
+          <!-- Encoder -->
+          <section class="tool-card">
+            <h2>ENCODING TOOLS</h2>
+            <div class="form-group">
+              <label>Input Text</label>
+              <textarea id="encodeInput" placeholder="Enter text to encode..." spellcheck="false"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Encoding Type</label>
+              <select id="encodeType">
+                <option value="base64">Base64</option>
+                <option value="hex">Hexadecimal</option>
+                <option value="binary">Binary</option>
+                <option value="url">URL Encode</option>
+                <option value="html">HTML Entities</option>
+                <option value="morse">Morse Code</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="encodingDecode">
+                Decode Mode
+              </label>
+            </div>
+            <button class="btn-primary" onclick="encodeText()">
+              ▶ ENCODE/DECODE
+            </button>
+            <div class="output" id="encodeTextOutput"></div>
+          </section>
+        </div>
+      </div>
+
+      <!-- Analysis Tab -->
+      <div id="analysis" class="tab-content">
+        <div class="tool-grid">
+          <!-- Analyzer -->
+          <section class="tool-card">
+            <h2>STEGANOGRAPHY ANALYZER</h2>
+            <div class="form-group">
+              <label>Text to Analyze</label>
+              <textarea id="analyzeInput" placeholder="Paste suspicious text for analysis..." spellcheck="false"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Analysis Depth</label>
+              <select id="analyzeDepth">
+                <option value="quick">Quick Scan</option>
+                <option value="standard">Standard Analysis</option>
+                <option value="deep">Deep Inspection</option>
+                <option value="forensic">Forensic Analysis</option>
+              </select>
+            </div>
+            <button class="btn-primary" onclick="analyze()">
+              ▶ ANALYZE FOR HIDDEN DATA
+            </button>
+            <div class="output" id="analyzeOutput"></div>
+          </section>
+
+          <!-- Statistics -->
+          <section class="tool-card">
+            <h2>TEXT STATISTICS</h2>
+            <div class="form-group">
+              <label>Text Sample</label>
+              <textarea id="statsInput" placeholder="Enter text for statistical analysis..." spellcheck="false"></textarea>
+            </div>
+            <button class="btn-primary" onclick="getStats()">
+              ▶ GENERATE STATISTICS
+            </button>
+            <div class="output" id="statsOutput"></div>
+          </section>
+        </div>
+      </div>
+
+      <!-- Tools Tab -->
+      <div id="tools" class="tab-content">
+        <div class="tool-grid">
+          <!-- Text Transform -->
+          <section class="tool-card">
+            <h2>TEXT TRANSFORMER</h2>
+            <div class="form-group">
+              <label>Input Text</label>
+              <textarea id="transformInput" placeholder="Enter text to transform..." spellcheck="false"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Transformation</label>
+              <select id="transformType">
+                <option value="reverse">Reverse</option>
+                <option value="upside-down">Upside Down</option>
+                <option value="bubble">Bubble Text</option>
+                <option value="zalgo">Zalgo Text</option>
+                <option value="leet">L33t Speak</option>
+                <option value="nato">NATO Phonetic</option>
+              </select>
+            </div>
+            <button class="btn-primary" onclick="transform()">
+              ▶ TRANSFORM
+            </button>
+            <div class="output" id="transformOutput"></div>
+          </section>
+
+          <!-- Hash Generator -->
+          <section class="tool-card">
+            <h2>HASH GENERATOR</h2>
+            <div class="form-group">
+              <label>Input Text</label>
+              <textarea id="hashInput" placeholder="Enter text to hash..." spellcheck="false"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Hash Algorithm</label>
+              <select id="hashType">
+                <option value="md5">MD5</option>
+                <option value="sha1">SHA-1</option>
+                <option value="sha256">SHA-256</option>
+                <option value="sha512">SHA-512</option>
+              </select>
+            </div>
+            <button class="btn-primary" onclick="generateHash()">
+              ▶ GENERATE HASH
+            </button>
+            <div class="output" id="hashOutput"></div>
+          </section>
+        </div>
+      </div>
+
+      <!-- API Tab -->
+      <div id="api" class="tab-content">
+        <div class="tool-grid">
+          <!-- API Tester -->
+          <section class="tool-card">
+            <h2>API ENDPOINT TESTER</h2>
+            <div class="form-group">
+              <label>Endpoint</label>
+              <select id="apiEndpoint">
+                <option value="/api/encode">POST /api/encode</option>
+                <option value="/api/decode">POST /api/decode</option>
+                <option value="/api/transform">POST /api/transform</option>
+                <option value="/api/analyze">POST /api/analyze</option>
+                <option value="/api/health">GET /api/health</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Request Body (JSON)</label>
+              <textarea id="apiBody" placeholder='{"message": "test", "carrier": "cover text"}' spellcheck="false"></textarea>
+            </div>
+            <button class="btn-primary" onclick="testAPI()">
+              ▶ SEND REQUEST
+            </button>
+            <div class="output" id="apiOutput"></div>
+          </section>
+
+          <!-- API Documentation -->
+          <section class="tool-card">
+            <h2>API DOCUMENTATION</h2>
+            <div style="padding: 10px; color: #aaa; font-size: 14px;">
+              <p><strong>Base URL:</strong> http://localhost:3001</p>
+              <br>
+              <p><strong>Endpoints:</strong></p>
+              <ul style="list-style: none; padding-left: 10px;">
+                <li>• POST /api/encode - Encode hidden message</li>
+                <li>• POST /api/decode - Decode hidden message</li>
+                <li>• POST /api/transform - Apply text transformation</li>
+                <li>• POST /api/analyze - Analyze for steganography</li>
+                <li>• GET /api/health - Server health check</li>
+                <li>• GET /api/transforms - List available transforms</li>
+                <li>• GET /api/techniques - List steganography techniques</li>
+              </ul>
+              <br>
+              <p><strong>Rate Limiting:</strong> 100 requests per 15 minutes</p>
+              <p><strong>Max Payload:</strong> 10MB</p>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>CIPHER-RECON v2.0.0 | Elite Red Team Toolkit</p>
+      <p>"In the shadows of text, secrets find their home"</p>
+      <p>
+        <a href="https://github.com/SkinzAI/CipherRecon" target="_blank">GitHub</a> |
+        <a href="#" onclick="showAbout()">About</a> |
+        <a href="#" onclick="showHelp()">Help</a>
+      </p>
+    </footer>
+
+    <!-- Notifications -->
+    <div id="notifications"></div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="bundle.min.js"></script>
+  </body>
+</html>
